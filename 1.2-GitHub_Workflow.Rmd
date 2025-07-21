@@ -1,0 +1,55 @@
+
+---
+title: "GitHub with RStudio and Command Line"
+output: html_document
+---
+
+## GitHub Authentication (Mac/Linux/Windows)
+
+1. Install Git and create a GitHub account.
+2. Generate a PAT (Personal Access Token) on GitHub.
+3. Authenticate using `gitcreds`:
+
+```{r}
+library(gitcreds)
+gitcreds_set()
+```
+
+## Link Local R Project to GitHub
+
+```bash
+# Terminal commands
+git init
+git remote add origin https://github.com/username/repo.git
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+```
+
+## RStudio Git Integration
+
+- Use the Git tab to pull, commit, and push changes.
+
+## Collaboration Examples
+
+1. **Cloning a Repo**
+   ```bash
+   git clone https://github.com/username/repo.git
+   ```
+
+2. **Forking**
+   - On GitHub > Fork > Clone your fork.
+
+3. **Creating Branches**
+   ```bash
+   git checkout -b new-feature
+   ```
+
+4. **Pull Request Workflow**
+   - Push branch, then make PR on GitHub.
+
+5. **Pulling Updates**
+   ```bash
+   git pull origin main
+   ```
+

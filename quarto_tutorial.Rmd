@@ -1,0 +1,151 @@
+
+---
+title: "Complete Quarto Tutorial Using RStudio"
+author: "Ehsan Zangene"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# 1. What is Quarto?
+**Quarto** is a next-generation document publishing system (like RMarkdown but more powerful).  
+It allows you to create:
+- Reports (HTML, PDF, Word)
+- Presentations (Reveal.js, Beamer)
+- Websites & blogs
+- Dashboards & books
+
+Quarto supports **R, Python, Julia, and ObservableJS**.
+
+# 2. Setting up Quarto in RStudio
+1. Install **R** and **RStudio**.
+2. Install **Quarto CLI** from [https://quarto.org/download/](https://quarto.org/download/).
+3. Check installation:
+```bash
+quarto check
+```
+4. Install **tinytex** if you want PDF outputs:
+```{r}
+tinytex::install_tinytex()
+```
+
+# 3. Creating Your First Quarto Document
+1. In **RStudio**, go to: `File > New File > Quarto Document`
+2. Select **HTML**, **PDF**, or **Word** as output.
+3. Save it with `.qmd` extension.
+
+# 4. Basic Structure of a Quarto Document
+A Quarto file (`.qmd`) has:
+1. **YAML Header (Metadata)**:
+```yaml
+---
+title: "My First Quarto Report"
+author: "Ehsan Zangene"
+date: "2025-07-18"
+format: html
+---
+```
+2. **Markdown content**:
+```markdown
+# Introduction
+This is my first Quarto document.
+```
+3. **Code chunks**:
+```{r}
+summary(cars)
+```
+
+# 5. Running and Rendering
+- Click **Render** in RStudio.
+- Or use command line:
+```bash
+quarto render myreport.qmd
+```
+
+# 6. Adding R Code
+Example:
+```{r}
+# Simple plot
+plot(cars)
+```
+
+# 7. Parameters in Quarto
+You can define parameters in YAML:
+```yaml
+params:
+  name: "Ehsan"
+  n: 10
+```
+Use them in R:
+```{r}
+paste("Hello", params$name)
+```
+
+# 8. Quarto Presentations
+- Use `format: revealjs` for interactive slides:
+```yaml
+---
+title: "Quarto Presentation"
+format: revealjs
+---
+```
+- Example slide:
+```markdown
+## Slide 1
+- Point A
+- Point B
+```
+
+# 9. Quarto + RStudio Workflow
+- Integrates like RMarkdown but faster and better cross-language support.
+- Supports **interactive HTML widgets** (e.g., `plotly`, `leaflet`).
+
+# 10. Example Document
+```markdown
+---
+title: "Data Analysis with Quarto"
+author: "Ehsan"
+date: "2025-07-18"
+format: html
+---
+
+# Introduction
+This is a Quarto example.
+
+## Dataset
+```{r}
+head(mtcars)
+```
+
+## Plot
+```{r}
+library(ggplot2)
+ggplot(mtcars, aes(x=wt, y=mpg)) + geom_point()
+```
+```
+
+# 11. Quarto vs RMarkdown
+- Quarto is the future replacement for RMarkdown.
+- You don’t need `rmarkdown::render()`, simply `quarto render`.
+- Supports more formats like books and interactive notebooks.
+
+# 12. Converting Existing RMarkdown to Quarto
+```bash
+quarto convert myfile.Rmd
+```
+
+# 13. Quarto Websites
+- Create a site:
+```bash
+quarto create-project mysite --type website
+cd mysite
+quarto render
+```
+- Add multiple `.qmd` files as site pages.
+
+# 14. Tips & Best Practices
+- Use `.qmd` for all reports moving forward.
+- Keep R code clean with chunk options:
+```{r}
+#| echo: false
+summary(cars)
+```

@@ -1,2 +1,2 @@
-# Kurt_session
-It is the online session with Kurt 
+# cons_session_kurt
+Kurt Consulting session

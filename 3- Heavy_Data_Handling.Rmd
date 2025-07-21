@@ -1,0 +1,55 @@
+
+---
+title: "Handling Large Spatial Datasets in R"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(parallel)
+library(data.table)
+```
+
+## Synthetic Dataset for Species Occurrence and Environment
+
+```{r}
+set.seed(123)
+species <- paste0("Species_", sample(LETTERS, 5000, replace = TRUE))
+latitude <- runif(5000, 35, 70)
+longitude <- runif(5000, -10, 40)
+temperature <- rnorm(5000, mean = 15, sd = 5)
+land_cover <- sample(c("Forest", "Urban", "Agriculture", "Wetland"), 5000, replace = TRUE)
+data <- data.frame(species, latitude, longitude, temperature, land_cover)
+```
+
+## Visualizing Species Distribution
+
+```{r}
+library(ggplot2)
+ggplot(data, aes(x = longitude, y = latitude, color = land_cover)) +
+  geom_point(alpha = 0.5) +
+  theme_minimal() +
+  labs(title = "Species Occurrence by Land Cover")
+```
+
+## Saving and Loading Efficiently
+
+```{r}
+saveRDS(data, "species_data.rds")
+data_loaded <- readRDS("species_data.rds")
+
+save(data, file = "species_data.RData")
+load("species_data.RData")
+```
+
+## Efficient Computing
+
+```{r}
+# Parallel computation demo
+cl <- makeCluster(detectCores() - 1)
+clusterExport(cl, varlist = "data")
+result <- parLapply(cl, 1:5, function(i) mean(data$temperature + i))
+stopCluster(cl)
+result
+```

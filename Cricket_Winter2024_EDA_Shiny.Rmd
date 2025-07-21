@@ -1,0 +1,109 @@
+
+---
+title: "Cricket Winter 2024 - EDA and Shiny App"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(shiny)
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+library(DT)
+
+# Load dataset
+cricket_winter_2024 <- read.csv("../cons_session_kurt_data/Winter2024_Merged_UGA.csv")
+cricket_winter_2024$Date <- as.Date(cricket_winter_2024$Date, format="%m/%d/%Y")
+```
+
+# Cricket Winter 2024 - Interactive Analysis
+
+This Shiny app provides an exploratory data analysis (EDA) and visualizations for the `Winter2024_Merged_UGA.csv` dataset.
+
+<img src="header.png" style="width:100%; max-height:200px;">
+
+## Data Overview
+
+```{r}
+glimpse(cricket_winter_2024)
+summary(cricket_winter_2024)
+```
+
+## Shiny App
+
+```{r, echo=FALSE}
+ui <- fluidPage(
+  titlePanel("Cricket Winter 2024 EDA"),
+  img(src = "./www/cricket_header.png", height = "150px"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("event_filter", "Select Event:", 
+                  choices = c("All", unique(cricket_winter_2024$EventID))),
+      dateRangeInput("date_filter", "Select Date Range:",
+                     start = min(cricket_winter_2024$Date),
+                     end = max(cricket_winter_2024$Date)),
+      selectInput("sex_filter", "Select Sex:", 
+                  choices = c("All", unique(cricket_winter_2024$Sex))),
+      selectInput("life_filter", "Select Life Stage:", 
+                  choices = c("All", unique(cricket_winter_2024$Life_stage)))
+    ),
+    
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Table View", DTOutput("data_table")),
+        tabPanel("Visualizations", 
+                 plotOutput("bar_plot"),
+                 plotOutput("box_plot"),
+                 plotOutput("strip_pos_hist"))
+      )
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  filtered_data <- reactive({
+    data <- cricket_winter_2024
+    if (input$event_filter != "All") {
+      data <- data %>% filter(EventID == input$event_filter)
+    }
+    if (input$sex_filter != "All") {
+      data <- data %>% filter(Sex == input$sex_filter)
+    }
+    if (input$life_filter != "All") {
+      data <- data %>% filter(Life_stage == input$life_filter)
+    }
+    data <- data %>% filter(Date >= input$date_filter[1], Date <= input$date_filter[2])
+    data
+  })
+  
+  output$data_table <- renderDT({
+    datatable(filtered_data())
+  })
+  
+  output$bar_plot <- renderPlot({
+    ggplot(filtered_data(), aes(x = Sex, fill = Life_stage)) +
+      geom_bar(position = "dodge") +
+      theme_minimal() +
+      labs(title = "Count of Crickets by Sex and Life Stage")
+  })
+  
+  output$box_plot <- renderPlot({
+    ggplot(filtered_data(), aes(x = Life_stage, y = Strip_Pos, fill = Life_stage)) +
+      geom_boxplot() +
+      theme_minimal() +
+      labs(title = "Distribution of Strip Position by Life Stage")
+  })
+  
+  output$strip_pos_hist <- renderPlot({
+    ggplot(filtered_data(), aes(x = Strip_Pos)) +
+      geom_histogram(bins = 30, fill = "skyblue", color = "black") +
+      theme_minimal() +
+      labs(title = "Histogram of Strip Position")
+  })
+}
+
+shinyApp(ui, server)
+```

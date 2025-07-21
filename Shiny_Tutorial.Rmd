@@ -1,0 +1,82 @@
+
+---
+title: "Introduction to Shiny Apps"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(shiny)
+library(ggplot2)
+library(dplyr)
+```
+
+# Shiny App Tutorial
+
+This is a tutorial to help you learn how to build Shiny apps using synthetic data. Below is a simple interactive Shiny app with multiple tabs and visualizations.
+
+## Synthetic Data
+
+```{r}
+# Sample synthetic data
+data <- data.frame(
+  Category = c("A", "B", "C", "D", "E"),
+  Value1 = c(23, 17, 35, 29, 12),
+  Value2 = c(5, 9, 2, 14, 7),
+  Group = c("X", "Y", "X", "Y", "X")
+)
+```
+
+## App UI and Server
+
+```{r, echo=FALSE}
+ui <- fluidPage(
+  titlePanel("Shiny App with Synthetic Data"),
+  img(src = "./www/banner copy.jpg", height = "100px"),
+
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("group", "Select Group:", choices = unique(data$Group)),
+      sliderInput("valueRange", "Select Value1 Range:", min = min(data$Value1), max = max(data$Value1),
+                  value = c(min(data$Value1), max(data$Value1)))
+    ),
+
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Filtered Data", tableOutput("filteredData")),
+        tabPanel("Bar Plot", plotOutput("barPlot")),
+        tabPanel("Scatter Plot", plotOutput("scatterPlot"))
+      )
+    )
+  )
+)
+
+server <- function(input, output) {
+  filtered <- reactive({
+    data %>%
+      filter(Group == input$group,
+             Value1 >= input$valueRange[1],
+             Value1 <= input$valueRange[2])
+  })
+
+  output$filteredData <- renderTable({
+    filtered()
+  })
+
+  output$barPlot <- renderPlot({
+    ggplot(filtered(), aes(x = Category, y = Value1, fill = Category)) +
+      geom_bar(stat = "identity") +
+      theme_minimal()
+  })
+
+  output$scatterPlot <- renderPlot({
+    ggplot(filtered(), aes(x = Value1, y = Value2, color = Category)) +
+      geom_point(size = 4) +
+      theme_classic()
+  })
+}
+
+shinyApp(ui, server)
+```
+
+> 🧪 **Try it**: Change the group or the value range to see how the plots and table update dynamically.
