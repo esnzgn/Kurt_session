@@ -28,6 +28,10 @@ This Shiny app provides an exploratory data analysis (EDA) and visualizations fo
 
 ```{r}
 glimpse(cricket_winter_2024)
+
+source("./scripts/toolkit_funcs.R")
+automatic_glimps("../cons_session_kurt_data/Winter2024_Merged_UGA.csv") 
+
 summary(cricket_winter_2024)
 ```
 
