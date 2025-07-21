@@ -8,6 +8,10 @@ output: html_document
 
 # Git and GitHub Workflow with Authentication and Commands (Mac, Linux, Windows)
 
+## Git and GitHub Workflow with Authentication and Commands (Mac, Linux, Windows)
+
+Git and GitHub Workflow with Authentication and Commands (Mac, Linux, Windows)
+
 !["github authentication"](./img/authentication.jpg)
 ## Scenario Overview
 
